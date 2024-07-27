@@ -15,6 +15,16 @@ class Attribute extends Model
         'value',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
     public function attributeAssignments(): HasMany
     {
         return $this->hasMany(AttributeAssignment::class);

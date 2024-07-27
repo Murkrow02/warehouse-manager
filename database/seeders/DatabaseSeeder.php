@@ -34,8 +34,18 @@ class DatabaseSeeder extends Seeder
         // Create Suppliers
         $suppliers = Supplier::factory()->count(10)->create();
 
-        // Create Categories
+        // Create root categories
         $categories = Category::factory()->count(10)->create();
+
+        // Create subcategories
+        $categories->each(function ($category) use ($categories, $faker) {
+            $category->childCategories()->createMany(
+               Category::factory()->count($faker->numberBetween(2, 5))->make()->toArray()
+            );
+        });
+
+        // Update categories with all the subcategories
+        $categories = Category::all();
 
         // Create Items
         $items = Item::factory()->count(50)->create()->each(function ($item) use ($faker, $categories) {
@@ -50,6 +60,11 @@ class DatabaseSeeder extends Seeder
         // Create Stocks
         $items->each(function ($item) use ($stores, $faker) {
             foreach ($stores as $store) {
+                Stock::create([
+                    'item_id' => $item->id,
+                    'store_id' => $store->id,
+                    'quantity' => $faker->numberBetween(1, 100),
+                ]);
                 Stock::create([
                     'item_id' => $item->id,
                     'store_id' => $store->id,
@@ -108,14 +123,13 @@ class DatabaseSeeder extends Seeder
         // Create Attributes
         $attributes = Attribute::factory()->count(20)->create();
 
-        // Create Attribute Assignments
-        $items->each(function ($item) use ($attributes, $faker) {
+        // Create Attribute Assignments foreach stock
+        Stock::all()->each(function ($stock) use ($attributes, $faker) {
             foreach ($attributes->random($faker->numberBetween(1, 5)) as $attribute) {
                 AttributeAssignment::create([
                     'attribute_id' => $attribute->id,
-                    'attributable_id' => $item->id,
-                    'attributable_type' => Item::class,
-                    'value' => $faker->word,
+                    'attributable_id' => $stock->id,
+                    'attributable_type' => Stock::class,
                 ]);
             }
         });

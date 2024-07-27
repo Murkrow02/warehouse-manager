@@ -30,14 +30,17 @@ class Item extends Model
         'serial_number',
     ];
 
-    protected $hidden = [
-        'supplier_id',
-    ];
+    protected $with = ['supplier', 'categories'];
 
     protected $casts = [
         'last_reorder_date' => 'date',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
@@ -61,10 +64,5 @@ class Item extends Model
     public function saleItems(): HasMany
     {
         return $this->hasMany(SaleItem::class);
-    }
-
-    public function attributeAssignments(): MorphMany
-    {
-        return $this->morphMany(AttributeAssignment::class, 'attributable');
     }
 }

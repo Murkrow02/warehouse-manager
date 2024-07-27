@@ -12,7 +12,6 @@ class CreateAttributeAssignmentsTable extends Migration
             $table->id();
             $table->foreignId('attribute_id')->constrained();
             $table->morphs('attributable');
-            $table->string('value');
             $table->timestamps();
         });
     }

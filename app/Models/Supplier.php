@@ -16,6 +16,18 @@ class Supplier extends Model
         'payment_details',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);

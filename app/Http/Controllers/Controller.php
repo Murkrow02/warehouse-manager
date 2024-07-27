@@ -10,7 +10,7 @@ abstract class Controller
     /**
      * @throws InvalidStoreException
      */
-    protected function getStoreIdOrThrow()
+    protected function getStoreIdOrThrow() : int
     {
         // Get store id from header
         $storeId = request()->header('store_id');

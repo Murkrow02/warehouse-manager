@@ -18,6 +18,21 @@ class Category extends Model
         'parent_category_id',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'pivot',
+        'parent_category_id',
+    ];
+
+   // protected $with = ['parentCategory'];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
     public function parentCategory(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_category_id');

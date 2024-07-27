@@ -15,9 +15,24 @@ class AttributeAssignment extends Model
         'attribute_id',
         'attributable_id',
         'attributable_type',
-        'value',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'attribute_id',
+        'attributable_id',
+        'attributable_type',
+        'id',
+    ];
+
+    protected $with = ['attribute'];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
     public function attribute(): BelongsTo
     {
         return $this->belongsTo(Attribute::class);
