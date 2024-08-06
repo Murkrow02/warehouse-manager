@@ -17,6 +17,19 @@ class SaleItem extends Model
         'price',
     ];
 
+    protected $hidden = [
+        'sale_id',
+        'updated_at',
+        'created_at',
+        'item_id',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
     public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);

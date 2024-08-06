@@ -10,8 +10,8 @@ class CreatePurchaseItemsTable extends Migration
     {
         Schema::create('purchase_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('purchase_order_id')->constrained();
-            $table->foreignId('item_id')->constrained();
+            $table->foreignId('purchase_order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('item_id')->constrained()->cascadeOnDelete();
             $table->integer('quantity');
             $table->decimal('price', 8, 2);
             $table->timestamps();

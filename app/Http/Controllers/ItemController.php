@@ -21,10 +21,9 @@ class ItemController extends Controller
         return response()->json($items);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(Item $item): JsonResponse
     {
-        $item = Item::findOrFail($id);
-        return response()->json($item);
+        return response()->json($item->load('supplier', 'categories'));
     }
 
     public function store(StoreItemRequest $request): JsonResponse
@@ -33,16 +32,24 @@ class ItemController extends Controller
         return response()->json($item, 201);
     }
 
-    public function update(UpdateItemRequest $request, int $id): JsonResponse
+    public function addImages(Item $item): JsonResponse
     {
-        $item = Item::findOrFail($id);
+        // Add new images
+        $item->addMultipleMediaFromRequest(['images'])
+            ->each(function ($fileAdder) {
+                $fileAdder->toMediaCollection('images');
+            });
+        return response()->json($item->getMedia('images'));
+    }
+
+    public function update(UpdateItemRequest $request, Item $item): JsonResponse
+    {
         $item->update($request->validated());
         return response()->json($item);
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(Item $item): JsonResponse
     {
-        $item = Item::findOrFail($id);
         $item->delete();
         return response()->json(null, 204);
     }

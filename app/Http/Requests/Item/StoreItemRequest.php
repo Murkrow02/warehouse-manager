@@ -25,6 +25,7 @@ class StoreItemRequest extends FormRequest
             'last_reorder_date' => 'nullable|date',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'serial_number' => 'nullable|string',
+            'images' => 'nullable|array',
         ];
     }
 }

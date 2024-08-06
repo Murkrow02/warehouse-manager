@@ -14,6 +14,7 @@ class CreateSalesTable extends Migration
             $table->string('customer');
             $table->decimal('total_price', 8, 2);
             $table->string('payment_method');
+            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

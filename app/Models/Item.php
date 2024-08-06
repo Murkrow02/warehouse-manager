@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Item extends Model
+class Item extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'code',
@@ -30,7 +32,11 @@ class Item extends Model
         'serial_number',
     ];
 
-    protected $with = ['supplier', 'categories'];
+    protected $hidden = [
+        'supplier_id',
+        'updated_at',
+        'created_at',
+    ];
 
     protected $casts = [
         'last_reorder_date' => 'date',

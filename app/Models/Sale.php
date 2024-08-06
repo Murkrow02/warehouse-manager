@@ -23,6 +23,18 @@ class Sale extends Model
         'sale_date' => 'date',
     ];
 
+    protected $hidden = [
+        'store_id',
+        'updated_at',
+        'created_at',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);

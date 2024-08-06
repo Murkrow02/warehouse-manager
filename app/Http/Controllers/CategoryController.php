@@ -20,9 +20,8 @@ class CategoryController extends Controller
         return response()->json($categories);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(Category $category): JsonResponse
     {
-        $category = Category::findOrFail($id);
         return response()->json($category->load('childCategories'));
     }
 
@@ -38,11 +37,9 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(Category $category): JsonResponse
     {
-        $category = Category::findOrFail($id);
         $category->delete();
-
         return response()->json(null, 204);
     }
 }

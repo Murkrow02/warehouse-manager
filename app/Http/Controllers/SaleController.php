@@ -2,49 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Sale\StoreSaleRequest;
+use App\Http\Requests\Sale\UpdateSaleRequest;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Stock;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
 
 class SaleController extends Controller
 {
-
-
     public function index(Request $request): JsonResponse
     {
         $sales = Sale::where('store_id', $this->getStoreIdOrThrow())
             ->when($request->input('search'), function ($query, $search) {
                 return $query->where('customer', 'like', "%{$search}%");
             })
-            ->paginate(10);
+            ->simplePaginate();
 
         return response()->json($sales);
     }
 
     public function show(Sale $sale): JsonResponse
     {
-        $this->authorize('view', $sale);
-
         return response()->json($sale->load('saleItems.item'));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreSaleRequest $request): JsonResponse
     {
-        $request->validate([
-            'customer' => 'required|string|max:255',
-            'sale_date' => 'required|date',
-            'status' => 'required|string',
-            'sale_items' => 'required|array',
-            'sale_items.*.item_id' => 'required|exists:items,id',
-            'sale_items.*.quantity' => 'required|integer|min:1',
-            'sale_items.*.price' => 'required|numeric|min:0',
+        DB::beginTransaction();
+
+        // Get total price
+        $totalPrice = collect($request->input('sale_items'))
+            ->reduce(function ($carry, $itemData) {
+                return $carry + $itemData['quantity'] * $itemData['price'];
+            }, 0);
+
+        // Merge total price to request data
+        $data = array_merge($request->except('sale_items',), [
+            'total_price' => $totalPrice,
+            'store_id' => $this->getStoreIdOrThrow(),
         ]);
 
-        $sale = Sale::create($request->except('sale_items'));
+        // Create sale
+        $sale = Sale::create($data);
 
+        // Create sale items
         foreach ($request->input('sale_items') as $itemData) {
             SaleItem::create([
                 'sale_id' => $sale->id,
@@ -62,17 +66,13 @@ class SaleController extends Controller
             $stock->save();
         }
 
-        return response()->json($sale, 201);
+        DB::commit();
+
+        return response()->json($sale->load('saleItems.item'), 201);
     }
 
-    public function update(Request $request, Sale $sale): JsonResponse
+    public function update(UpdateSaleRequest $request, Sale $sale): JsonResponse
     {
-        $request->validate([
-            'customer' => 'string|max:255',
-            'total_price' => 'numeric',
-            'payment_method' => 'string',
-        ]);
-
         $sale->update($request->all());
 
         return response()->json($sale);
@@ -81,7 +81,6 @@ class SaleController extends Controller
     public function destroy(Sale $sale): JsonResponse
     {
         $sale->delete();
-
         return response()->json(null, 204);
     }
 }

@@ -91,20 +91,26 @@ class DatabaseSeeder extends Seeder
             });
         });
 
-        // Create Sales
-        $sales = Sale::factory()->count(20)->create();
+        // Create Sales foreach store
+        $stores->each(function ($store) use ($faker, $items) {
+            $sales = Sale::factory()->count($faker->numberBetween(5, 20))->create([
+                'store_id' => $store->id,
+            ]);
 
-        // Create Sale Items
-        $sales->each(function ($sale) use ($items, $faker) {
-            foreach ($items->random($faker->numberBetween(1, 5)) as $item) {
-                SaleItem::create([
-                    'sale_id' => $sale->id,
-                    'item_id' => $item->id,
-                    'quantity' => $faker->numberBetween(1, 10),
-                    'price' => $faker->randomFloat(2, 1, 100),
-                ]);
-            }
+            // Create Sale Items
+            $sales->each(function ($sale) use ($items, $faker) {
+                foreach ($items->random($faker->numberBetween(1, 5)) as $item) {
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'item_id' => $item->id,
+                        'quantity' => $faker->numberBetween(1, 10),
+                        'price' => $faker->randomFloat(2, 1, 100),
+                    ]);
+                }
+            });
         });
+
+
 
         // Create Messages
         $stores->each(function ($store) use ($stores, $faker) {

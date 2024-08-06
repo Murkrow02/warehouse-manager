@@ -91,14 +91,10 @@ class StockController extends Controller
         }
     }
 
-    public function update(UpdateStockRequest $request, int $id): JsonResponse
+    public function update(UpdateStockRequest $request, Stock $stock): JsonResponse
     {
         $validated = $request->validated();
 
-        // Get the stock requested
-        $stock = Stock::where('id', $id)
-            ->where('store_id', $this->getStoreIdOrThrow())
-            ->firstOrFail();
 
         DB::beginTransaction();
         try {
@@ -127,12 +123,8 @@ class StockController extends Controller
         }
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(Stock $stock): JsonResponse
     {
-        $stock = Stock::where('id', $id)
-            ->where('store_id', $this->getStoreIdOrThrow())
-            ->firstOrFail();
-
         DB::beginTransaction();
         try {
             $stock->attributes()->delete();

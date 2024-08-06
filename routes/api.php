@@ -22,19 +22,20 @@ Route::middleware('auth:sanctum')->group(function () {
     // Item Routes
     Route::prefix('items')->group(function () {
         Route::get('/', [ItemController::class, 'index']);
-        Route::get('/{id}', [ItemController::class, 'show']);
+        Route::get('/{item}', [ItemController::class, 'show']);
         Route::post('/', [ItemController::class, 'store']);
-        Route::put('/{id}', [ItemController::class, 'update']);
-        Route::delete('/{id}', [ItemController::class, 'destroy']);
+        Route::put('/{item}', [ItemController::class, 'update']);
+        Route::post('/{item}/images', [ItemController::class, 'addImages']);
+        Route::delete('/{item}', [ItemController::class, 'destroy']);
     });
 
     // Category Routes
     Route::prefix('categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index']);
-        Route::get('/{id}', [CategoryController::class, 'show']);
+        Route::get('/{category}', [CategoryController::class, 'show']);
         Route::post('/', [CategoryController::class, 'store']);
-        Route::put('/{id}', [CategoryController::class, 'update']);
-        Route::delete('/{id}', [CategoryController::class, 'destroy']);
+        Route::put('/{category}', [CategoryController::class, 'update']);
+        Route::delete('/{category}', [CategoryController::class, 'destroy']);
     });
 
     // Stock Routes
@@ -42,8 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [StockController::class, 'index']);
         Route::get('/{id}', [StockController::class, 'show']);
         Route::post('/', [StockController::class, 'store']);
-        Route::put('/{id}', [StockController::class, 'update']);
-        Route::delete('/{id}', [StockController::class, 'destroy']);
+        Route::put('/{stock}', [StockController::class, 'update']);
+        Route::delete('/{stock}', [StockController::class, 'destroy']);
     });
 
     // Supplier Routes
@@ -67,10 +68,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Sale Routes
     Route::prefix('sales')->group(function () {
         Route::get('/', [SaleController::class, 'index']);
-        Route::get('/{id}', [SaleController::class, 'show']);
+        Route::get('/{sale}', [SaleController::class, 'show']);
         Route::post('/', [SaleController::class, 'store']);
-        Route::put('/{id}', [SaleController::class, 'update']);
-        Route::delete('/{id}', [SaleController::class, 'destroy']);
+        Route::put('/{sale}', [SaleController::class, 'update']);
+        Route::delete('/{sale}', [SaleController::class, 'destroy']);
     });
 
     // Message Routes
