@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->decimal('vat', 8, 2);
             $table->integer('min_stock_quantity');
             $table->date('last_reorder_date')->nullable();
-            $table->foreignId('supplier_id')->constrained();
+            $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->string('serial_number');
             $table->timestamps();
         });

@@ -50,19 +50,19 @@ Route::middleware('auth:sanctum')->group(function () {
     // Supplier Routes
     Route::prefix('suppliers')->group(function () {
         Route::get('/', [SupplierController::class, 'index']);
-        Route::get('/{id}', [SupplierController::class, 'show']);
+        Route::get('/{supplier}', [SupplierController::class, 'show']);
         Route::post('/', [SupplierController::class, 'store']);
-        Route::put('/{id}', [SupplierController::class, 'update']);
-        Route::delete('/{id}', [SupplierController::class, 'destroy']);
+        Route::put('/{supplier}', [SupplierController::class, 'update']);
+        Route::delete('/{supplier}', [SupplierController::class, 'destroy']);
     });
 
     // Purchase Order Routes
     Route::prefix('purchase-orders')->group(function () {
         Route::get('/', [PurchaseOrderController::class, 'index']);
-        Route::get('/{id}', [PurchaseOrderController::class, 'show']);
+        Route::get('/{order}', [PurchaseOrderController::class, 'show']);
         Route::post('/', [PurchaseOrderController::class, 'store']);
-        Route::put('/{id}', [PurchaseOrderController::class, 'update']);
-        Route::delete('/{id}', [PurchaseOrderController::class, 'destroy']);
+        Route::put('/{purchaseOrder}', [PurchaseOrderController::class, 'update']);
+        Route::delete('/{purchaseOrder}', [PurchaseOrderController::class, 'destroy']);
     });
 
     // Sale Routes

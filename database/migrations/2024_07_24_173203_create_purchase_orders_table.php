@@ -10,7 +10,7 @@ class CreatePurchaseOrdersTable extends Migration
     {
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id')->constrained();
+            $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->date('order_date');
             $table->string('status');
             $table->timestamps();

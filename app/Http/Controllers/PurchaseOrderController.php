@@ -11,7 +11,6 @@ class PurchaseOrderController extends Controller
     public function index(): JsonResponse
     {
         $orders = PurchaseOrder::with('supplier')->get();
-
         return response()->json($orders);
     }
 
@@ -27,7 +26,6 @@ class PurchaseOrderController extends Controller
             'order_date' => 'required|date',
             'status' => 'required|string',
         ]);
-
         $order = PurchaseOrder::create($request->all());
 
         return response()->json($order, 201);

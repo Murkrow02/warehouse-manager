@@ -13,7 +13,7 @@ class SupplierFactory extends Factory
         return [
             'name' => $this->faker->company,
             'contact_details' => $this->faker->address,
-            'payment_details' => $this->faker->text,
+            'payment_details' => 'Bank transfer',
         ];
     }
 }

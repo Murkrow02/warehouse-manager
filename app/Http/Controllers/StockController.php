@@ -16,17 +16,21 @@ class StockController extends Controller
     {
         $storeId = $this->getStoreIdOrThrow();
 
+        // Get items with stock in the store
         $items = Item::whereHas('stocks', function ($query) use ($storeId) {
             $query->where('store_id', $storeId);
         })->simplePaginate();
 
+        // Get the item IDs
         $itemIds = $items->pluck('id');
 
+        // Get the stocks
         $stocks = Stock::where('store_id', '=', $storeId)
             ->whereIn('item_id', $itemIds)
             ->with(['item', 'attributes'])
             ->get();
 
+        // Group the stocks by item
         $groupedStocks = $stocks->groupBy('item_id')->map(function ($stocks) {
             $item = $stocks->first()->item;
             return [
@@ -37,6 +41,7 @@ class StockController extends Controller
             ];
         });
 
+        // Transform the items
         $items->getCollection()->transform(function ($item) use ($groupedStocks) {
             return $groupedStocks->get($item->id);
         });
