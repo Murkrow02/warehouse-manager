@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Attribute extends Model
 {
@@ -25,8 +26,5 @@ class Attribute extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-    public function attributeAssignments(): HasMany
-    {
-        return $this->hasMany(AttributeAssignment::class);
-    }
+
 }

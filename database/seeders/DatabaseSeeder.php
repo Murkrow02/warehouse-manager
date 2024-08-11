@@ -2,27 +2,23 @@
 
 namespace Database\Seeders;
 
+use App\Managers\PurchaseOrder\PurchaseOrderManager;
 use App\Models\User;
+use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Item;
-use App\Models\Stock;
 use App\Models\Category;
-use App\Models\ItemCategory;
 use App\Models\Supplier;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseItem;
-use App\Models\Sale;
-use App\Models\SaleItem;
 use App\Models\Store;
 use App\Models\Message;
 use App\Models\Attribute;
-use App\Models\AttributeAssignment;
 use Faker\Factory as Faker;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $faker = Faker::create();
 
@@ -40,7 +36,7 @@ class DatabaseSeeder extends Seeder
         // Create subcategories
         $categories->each(function ($category) use ($categories, $faker) {
             $category->childCategories()->createMany(
-               Category::factory()->count($faker->numberBetween(2, 5))->make()->toArray()
+                Category::factory()->count($faker->numberBetween(2, 5))->make()->toArray()
             );
         });
 
@@ -54,63 +50,40 @@ class DatabaseSeeder extends Seeder
             );
         });
 
-        // Create Stores
-        $stores = Store::factory()->count(5)->create();
+        // Create Attributes
+        $attributes = Attribute::factory()->count(20)->create();
 
-        // Create Stocks
-        $items->each(function ($item) use ($stores, $faker) {
-            foreach ($stores as $store) {
-                Stock::create([
-                    'item_id' => $item->id,
-                    'store_id' => $store->id,
-                    'quantity' => $faker->numberBetween(1, 100),
-                ]);
-                Stock::create([
-                    'item_id' => $item->id,
-                    'store_id' => $store->id,
-                    'quantity' => $faker->numberBetween(1, 100),
-                ]);
+        // Create stores with one warehouse each
+        $stores = Store::factory()->count(10)->create()->each(function ($store) {
+            $store->warehouses()->save(Warehouse::factory()->make());
+        });
+
+        // Foreach store, associate also the warehouse of the next store to mix up the data
+        $stores->each(function ($store, $key) use ($stores) {
+            $store->warehouses()->attach($stores->get(($key + 1) % $stores->count())->warehouses->first());
+        });
+
+        // Purchase some items foreach store
+        foreach ($stores as $store) {
+
+            // Purchase from random supplier
+            $purchaseOrderManager = new PurchaseOrderManager(
+                Supplier::inRandomOrder()->first()->id
+            );
+
+            // Add items to the purchase order
+            for ($i = 0; $i < $faker->numberBetween(1, 5); $i++) {
+                $purchaseOrderManager->newItem(Item::inRandomOrder()->first()->id)
+                    ->count($faker->numberBetween(1, 10))
+                    ->attributeIds($attributes->random($faker->numberBetween(1, 5))->pluck('id')->toArray())
+                    ->price($faker->randomFloat(2, 1, 100))
+                    ->sendToWarehouse($store->warehouses->random()->id)
+                    ->add();
             }
-        });
 
-        // Create Purchase Orders and Purchase Items
-        $suppliers->each(function ($supplier) use ($items, $faker) {
-            $purchaseOrders = PurchaseOrder::factory()->count(5)->create([
-                'supplier_id' => $supplier->id,
-            ]);
-
-            $purchaseOrders->each(function ($purchaseOrder) use ($items, $faker) {
-                foreach ($items->random($faker->numberBetween(1, 5)) as $item) {
-                    PurchaseItem::create([
-                        'purchase_order_id' => $purchaseOrder->id,
-                        'item_id' => $item->id,
-                        'quantity' => $faker->numberBetween(1, 50),
-                        'price' => $faker->randomFloat(2, 1, 100),
-                    ]);
-                }
-            });
-        });
-
-        // Create Sales foreach store
-        $stores->each(function ($store) use ($faker, $items) {
-            $sales = Sale::factory()->count($faker->numberBetween(5, 20))->create([
-                'store_id' => $store->id,
-            ]);
-
-            // Create Sale Items
-            $sales->each(function ($sale) use ($items, $faker) {
-                foreach ($items->random($faker->numberBetween(1, 5)) as $item) {
-                    SaleItem::create([
-                        'sale_id' => $sale->id,
-                        'item_id' => $item->id,
-                        'quantity' => $faker->numberBetween(1, 10),
-                        'price' => $faker->randomFloat(2, 1, 100),
-                    ]);
-                }
-            });
-        });
-
-
+            // Finalize the purchase
+            $purchaseOrderManager->purchase();
+        }
 
         // Create Messages
         $stores->each(function ($store) use ($stores, $faker) {
@@ -122,20 +95,6 @@ class DatabaseSeeder extends Seeder
                     'receiver_store_id' => $otherStore->id,
                     'text' => $faker->text,
                     'status' => $faker->randomElement(['sent', 'received', 'read']),
-                ]);
-            }
-        });
-
-        // Create Attributes
-        $attributes = Attribute::factory()->count(20)->create();
-
-        // Create Attribute Assignments foreach stock
-        Stock::all()->each(function ($stock) use ($attributes, $faker) {
-            foreach ($attributes->random($faker->numberBetween(1, 5)) as $attribute) {
-                AttributeAssignment::create([
-                    'attribute_id' => $attribute->id,
-                    'attributable_id' => $stock->id,
-                    'attributable_type' => Stock::class,
                 ]);
             }
         });

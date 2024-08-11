@@ -1,23 +1,22 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStoresTable extends Migration
-{
+return new class extends Migration {
     public function up()
     {
-        Schema::create('stores', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('address');
+            $table->text('description');
+            $table->foreignId('parent_category_id')->nullable()->constrained('categories')->cascadeOnDelete();
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('stores');
+        Schema::dropIfExists('categories');
     }
-}
+};

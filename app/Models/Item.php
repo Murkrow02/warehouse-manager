@@ -71,4 +71,17 @@ class Item extends Model implements HasMedia
     {
         return $this->hasMany(SaleItem::class);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom logic
+    |--------------------------------------------------------------------------
+    */
+    public function purchase()
+    {
+
+    }
+
+
+
 }

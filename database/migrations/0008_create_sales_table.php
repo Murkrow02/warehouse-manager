@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSalesTable extends Migration
-{
+return new class extends Migration {
     public function up()
     {
         Schema::create('sales', function (Blueprint $table) {
@@ -15,6 +14,7 @@ class CreateSalesTable extends Migration
             $table->decimal('total_price', 8, 2);
             $table->string('payment_method');
             $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('warehouse_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -23,4 +23,4 @@ class CreateSalesTable extends Migration
     {
         Schema::dropIfExists('sales');
     }
-}
+};

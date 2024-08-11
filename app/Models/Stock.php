@@ -2,25 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use JetBrains\PhpStorm\NoReturn;
 
 class Stock extends Model
 {
 
     protected $fillable = [
         'item_id',
-        'store_id',
+        'warehouse_id',
         'quantity',
     ];
 
     protected $hidden = [
         'created_at',
         'item_id',
-        'store_id',
+        'warehouse_id',
     ];
 
     /*
@@ -33,13 +34,14 @@ class Stock extends Model
         return $this->belongsTo(Item::class);
     }
 
-    public function store(): BelongsTo
+    public function warehouse(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Warehouse::class);
     }
 
-    public function attributes(): MorphMany
+    public function attributes(): MorphToMany
     {
-        return $this->morphMany(AttributeAssignment::class, 'attributable');
+        return $this->morphToMany(Attribute::class, 'attributable');
     }
+
 }

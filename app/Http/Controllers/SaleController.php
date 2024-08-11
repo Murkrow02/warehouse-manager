@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidStoreException;
 use App\Http\Requests\Sale\StoreSaleRequest;
 use App\Http\Requests\Sale\UpdateSaleRequest;
 use App\Models\Sale;
@@ -29,6 +30,9 @@ class SaleController extends Controller
         return response()->json($sale->load('saleItems.item'));
     }
 
+    /**
+     * @throws InvalidStoreException
+     */
     public function store(StoreSaleRequest $request): JsonResponse
     {
         DB::beginTransaction();
@@ -50,6 +54,7 @@ class SaleController extends Controller
 
         // Create sale items
         foreach ($request->input('sale_items') as $itemData) {
+
             SaleItem::create([
                 'sale_id' => $sale->id,
                 'item_id' => $itemData['item_id'],
@@ -57,13 +62,13 @@ class SaleController extends Controller
                 'price' => $itemData['price'],
             ]);
 
-            // Update stock after sale
-            $stock = Stock::where('item_id', $itemData['item_id'])
-                ->where('store_id', $this->getStoreIdOrThrow())
-                ->firstOrFail();
-
-            $stock->quantity -= $itemData['quantity'];
-            $stock->save();
+//            // Update stock after sale
+//            $stockManager = new StockManager(
+//                $itemData['item_id'],
+//                $this->getStoreIdOrThrow(),
+//                $itemData['attributes'],
+//            );
+//            $stockManager->increment($itemData['quantity']);
         }
 
         DB::commit();

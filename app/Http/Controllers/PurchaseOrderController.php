@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PurchaseOrder\StorePurchaseOrderRequest;
 use App\Models\PurchaseOrder;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PurchaseOrderController extends Controller
 {
@@ -19,15 +20,15 @@ class PurchaseOrderController extends Controller
         return response()->json($order->load('supplier', 'purchaseItems.item'));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StorePurchaseOrderRequest $request): JsonResponse
     {
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'order_date' => 'required|date',
             'status' => 'required|string',
         ]);
-        $order = PurchaseOrder::create($request->all());
 
+        $order = PurchaseOrder::create($request->all());
         return response()->json($order, 201);
     }
 
@@ -47,7 +48,6 @@ class PurchaseOrderController extends Controller
     public function destroy(PurchaseOrder $order): JsonResponse
     {
         $order->delete();
-
         return response()->json(null, 204);
     }
 }
