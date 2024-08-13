@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\InvalidStoreException;
 use App\Http\Requests\Sale\StoreSaleRequest;
 use App\Http\Requests\Sale\UpdateSaleRequest;
+use App\Managers\Sale\SaleManager;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Stock;
@@ -35,51 +36,29 @@ class SaleController extends Controller
      */
     public function store(StoreSaleRequest $request): JsonResponse
     {
-        DB::beginTransaction();
 
-        // Get total price
-        $totalPrice = collect($request->input('sale_items'))
-            ->reduce(function ($carry, $itemData) {
-                return $carry + $itemData['quantity'] * $itemData['price'];
-            }, 0);
+        // Instantiate a new sale for provided customer
+        $saleManager = new SaleManager($this->getStoreIdOrThrow(), $request->customer, $request->payment_method);
 
-        // Merge total price to request data
-        $data = array_merge($request->except('sale_items',), [
-            'total_price' => $totalPrice,
-            'store_id' => $this->getStoreIdOrThrow(),
-        ]);
-
-        // Create sale
-        $sale = Sale::create($data);
-
-        // Create sale items
-        foreach ($request->input('sale_items') as $itemData) {
-
-            SaleItem::create([
-                'sale_id' => $sale->id,
-                'item_id' => $itemData['item_id'],
-                'quantity' => $itemData['quantity'],
-                'price' => $itemData['price'],
-            ]);
-
-//            // Update stock after sale
-//            $stockManager = new StockManager(
-//                $itemData['item_id'],
-//                $this->getStoreIdOrThrow(),
-//                $itemData['attributes'],
-//            );
-//            $stockManager->increment($itemData['quantity']);
+        // Start adding articles
+        foreach ($request->items as $item)
+        {
+            $saleManager->newItem($item['id'])
+                ->count($item['quantity'])
+                ->attributeIds($item['attributes'] ?? [])
+                ->getFromWarehouse($item['warehouse_id'])
+                ->price($item['price'])
+                ->add();
         }
 
-        DB::commit();
-
-        return response()->json($sale->load('saleItems.item'), 201);
+        // Execute the sale
+        $sale = $saleManager->process();
+        return response()->json($sale, 201);
     }
 
     public function update(UpdateSaleRequest $request, Sale $sale): JsonResponse
     {
         $sale->update($request->all());
-
         return response()->json($sale);
     }
 

@@ -18,10 +18,10 @@ class StoreSaleRequest extends FormRequest
             'sale_date' => 'required|date',
             'status' => 'required|string',
             'payment_method' => 'required|string',
-            'sale_items' => 'required|array',
-            'sale_items.*.item_id' => 'required|exists:items,id',
-            'sale_items.*.quantity' => 'required|integer|min:1',
-            'sale_items.*.price' => 'required|numeric|min:0',
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:items,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.price' => 'required|numeric|min:0',
         ];
     }
 }

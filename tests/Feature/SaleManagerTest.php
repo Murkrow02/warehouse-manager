@@ -17,7 +17,7 @@ beforeEach(function () {
     $this->store = Store::factory()->create();
     $this->attributes = Attribute::factory()->count(3)->create();
     $this->warehouse = Warehouse::factory()->create();
-    $this->saleManager = new SaleManager($this->store->id);
+    $this->saleManager = new SaleManager($this->store->id, 'John Doe', 'cash');
     $this->stockManager = new StockManager($this->item->id, $this->warehouse->id, $this->attributes->pluck('id')->toArray());
 
 

@@ -9,7 +9,12 @@ use App\Managers\Stock\StockManager;
 
 class SaleManager extends BaseTradeManager
 {
-    public function __construct(protected int $storeId, protected $saleDate = null)
+    public function __construct(
+        protected int $storeId,
+        protected string $customer,
+        protected string $paymentMethod,
+        protected $saleDate = null
+    )
     {
         //parent::__construct();
     }
@@ -17,8 +22,8 @@ class SaleManager extends BaseTradeManager
     protected function createMainTradeEntity(): Sale
     {
         return Sale::create([
-            'customer' => 'ASd',
-            'payment_method' => 'cash',
+            'customer' => $this->customer,
+            'payment_method' => $this->paymentMethod,
             'store_id' => $this->storeId,
             'sale_date' => $this->saleDate ?? now(),
             'status' => 'pending',

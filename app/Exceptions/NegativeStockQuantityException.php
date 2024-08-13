@@ -16,12 +16,12 @@ class NegativeStockQuantityException extends Exception
     {
         parent::__construct("Cannot decrement stock below 0 for item {$stock->item->name} in warehouse {$stock->warehouse->name}", $code, $previous);
     }
-
-    /**
-     * Render the exception as an HTTP response.
-     */
-    public function render(Request $request): Response
-    {
-
-    }
+//
+//    /**
+//     * Render the exception as an HTTP response.
+//     */
+//    public function render(Request $request): Response
+//    {
+//
+//    }
 }
