@@ -14,13 +14,13 @@ class StorePurchaseOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'supplier_id' => 'required|exists:suppliers,id',
-            'order_date' => 'required|date',
-            'items' => 'required|array',
-            'items.*.item_id' => 'required|exists:items,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.attributes' => 'array',
-            'items.*.attributes.*' => 'integer|exists:attributes,id',
+//            'supplier_id' => 'required|exists:suppliers,id',
+//            'order_date' => 'required|date',
+//            'items' => 'required|array',
+//            'items.*.item_id' => 'required|exists:items,id',
+//            'items.*.quantity' => 'required|integer|min:1',
+//            'items.*.attributes' => 'array',
+//            'items.*.attributes.*' => 'integer|exists:attributes,id',
         ];
     }
 }

@@ -14,19 +14,32 @@ class StockController extends Controller
 {
     public function index(): JsonResponse
     {
-        $storeId = $this->getStoreIdOrThrow();
+        // Get warehouses available for the store
+        $storeWarehouses = $this->getStoreOrThrow()->warehouses->pluck('id');
 
-        // Get items with stock in the store
-        $items = Item::whereHas('stocks', function ($query) use ($storeId) {
-            $query->where('store_id', $storeId);
+        // Get search queries
+        $name = request()->query('name');
+        $code = request()->query('code');
+
+        // Start by filtering items by name
+        $items = Item::query();
+        if ($code) { // If code is provided, filter by code only
+            $items->where('code', $code);
+        }
+        else if ($name) { // If name is provided, filter by name
+            $items->where('name', 'like', "%$name%");
+        }
+
+        // Get items available for the store
+        $items = $items->whereHas('stocks', function ($query) use ($storeWarehouses) {
+            $query->whereIn('warehouse_id', $storeWarehouses);
         })->simplePaginate();
 
         // Get the item IDs
         $itemIds = $items->pluck('id');
 
         // Get the stocks
-        $stocks = Stock::where('store_id', '=', $storeId)
-            ->whereIn('item_id', $itemIds)
+        $stocks = Stock::whereIn('item_id', $itemIds)
             ->with(['item', 'attributes'])
             ->get();
 

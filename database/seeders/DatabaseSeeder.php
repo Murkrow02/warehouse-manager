@@ -9,8 +9,6 @@ use Illuminate\Database\Seeder;
 use App\Models\Item;
 use App\Models\Category;
 use App\Models\Supplier;
-use App\Models\PurchaseOrder;
-use App\Models\PurchaseItem;
 use App\Models\Store;
 use App\Models\Message;
 use App\Models\Attribute;

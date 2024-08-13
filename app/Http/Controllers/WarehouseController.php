@@ -12,7 +12,7 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json($this->getStoreOrThrow()->warehouses()->simplePaginate());
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PurchaseOrder\StorePurchaseOrderRequest;
+use App\Managers\PurchaseOrder\PurchaseOrderManager;
 use App\Models\PurchaseOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,32 +18,27 @@ class PurchaseOrderController extends Controller
 
     public function show(PurchaseOrder $order): JsonResponse
     {
-        return response()->json($order->load('supplier', 'purchaseItems.item'));
+        return response()->json($order->load('supplier', 'purchaseItems.item', 'purchaseItems.attributes', 'purchaseItems.warehouse'));
     }
 
     public function store(StorePurchaseOrderRequest $request): JsonResponse
     {
-        $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'order_date' => 'required|date',
-            'status' => 'required|string',
-        ]);
+        // Instantiate a new purchase for provided supplier
+        $manager = new PurchaseOrderManager($request->supplier_id, $request->order_date);
 
-        $order = PurchaseOrder::create($request->all());
+        // Start adding articles
+        foreach ($request->items as $item) {
+            $manager->newItem($item['id'])
+                ->count($item['quantity'])
+                ->attributeIds($item['attributes'] ?? [])
+                ->sendToWarehouse($item['warehouse_id'])
+                ->price($item['price'])
+                ->add();
+        }
+
+        // Execute the purchase
+        $order = $manager->purchase();
         return response()->json($order, 201);
-    }
-
-    public function update(Request $request, PurchaseOrder $order): JsonResponse
-    {
-        $request->validate([
-            'supplier_id' => 'exists:suppliers,id',
-            'order_date' => 'date',
-            'status' => 'string',
-        ]);
-
-        $order->update($request->all());
-
-        return response()->json($order);
     }
 
     public function destroy(PurchaseOrder $order): JsonResponse

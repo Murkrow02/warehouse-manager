@@ -17,6 +17,7 @@ class PurchaseItem extends Model
         'item_id',
         'quantity',
         'price',
+        'warehouse_id'
     ];
 
     protected $hidden = [
@@ -41,6 +42,11 @@ class PurchaseItem extends Model
     public function attributes(): MorphToMany
     {
         return $this->morphToMany(Attribute::class, 'attributable');
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
     }
 
 }

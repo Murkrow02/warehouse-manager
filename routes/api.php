@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\CategoryController;
@@ -61,8 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [PurchaseOrderController::class, 'index']);
         Route::get('/{order}', [PurchaseOrderController::class, 'show']);
         Route::post('/', [PurchaseOrderController::class, 'store']);
-        Route::put('/{purchaseOrder}', [PurchaseOrderController::class, 'update']);
-        Route::delete('/{purchaseOrder}', [PurchaseOrderController::class, 'destroy']);
+        Route::delete('/{order}', [PurchaseOrderController::class, 'destroy']);
     });
 
     // Sale Routes
@@ -81,5 +81,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [MessageController::class, 'store']);
         Route::put('/{id}', [MessageController::class, 'update']);
         Route::delete('/{id}', [MessageController::class, 'destroy']);
+    });
+
+    // Warehouses Routes
+    Route::prefix('warehouses')->group(function () {
+        Route::get('/', [WarehouseController::class, 'index']);
+        Route::get('/{warehouse}', [WarehouseController::class, 'show']);
+        Route::post('/', [WarehouseController::class, 'store']);
+        Route::put('/{warehouse}', [WarehouseController::class, 'update']);
+        Route::delete('/{warehouse}', [WarehouseController::class, 'destroy']);
     });
 });

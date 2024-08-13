@@ -16,6 +16,12 @@ class Store extends Model
         'address',
     ];
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
     public function stocks(): HasMany
     {
         return $this->hasMany(Stock::class);

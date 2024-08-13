@@ -15,12 +15,14 @@ class PurchaseOrderManager
 
     public function __construct(
         protected int $supplierId,
-    ) {}
+        protected ?string $orderDate = null,
+    ) {
+    }
 
     /**
      * @throws Exception
      */
-    public function purchase(): void
+    public function purchase() : PurchaseOrder
     {
         DB::beginTransaction();
 
@@ -28,7 +30,7 @@ class PurchaseOrderManager
             // Create the purchase order
             $purchaseOrder = PurchaseOrder::create([
                 'supplier_id' => $this->supplierId,
-                'order_date' => now(),
+                'order_date' => $this->orderDate ?? now(),
                 'status' => 'pending',
             ]);
 
@@ -56,6 +58,8 @@ class PurchaseOrderManager
             }
 
             DB::commit();
+
+            return $purchaseOrder;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e; // Re-throw the exception after rolling back the transaction
