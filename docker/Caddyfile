@@ -1,5 +1,5 @@
 https://gemag.lcsolutions.it  {
-    root * /var/www/public
+    root * /var/www/warehouse-manager/public
     file_server
 
     php_fastcgi unix//var/www/warehouse-manager/fpm.sock {
