@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
             }
 
             // Finalize the purchase
-            $purchaseOrderManager->purchase();
+            $purchaseOrderManager->process();
         }
 
         // Create Messages

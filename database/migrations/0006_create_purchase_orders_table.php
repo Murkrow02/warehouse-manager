@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->date('order_date');
             $table->string('status');
+            $table->decimal('total_price', 8, 2);
             $table->timestamps();
         });
     }

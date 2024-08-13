@@ -36,7 +36,7 @@ it('creates a purchase order and associated items', function () {
         ->add();
 
     // Act
-    $this->purchaseOrderManager->purchase();
+    $this->purchaseOrderManager->process();
 
     $this->stockManager = new StockManager($this->item->id, $this->warehouse->id, $this->attributes->pluck('id')->toArray());
 
@@ -58,7 +58,7 @@ it('increments stock quantity correctly', function () {
         ->price(200)
         ->sendToWarehouse($this->warehouse->id)
         ->add();
-    $this->purchaseOrderManager->purchase();
+    $this->purchaseOrderManager->process();
 
     // Act
     $stockManager = new StockManager(
@@ -85,7 +85,7 @@ it('handles stock increment correctly when same item is purchased multiple times
         ->price(50)
         ->sendToWarehouse($this->warehouse->id)
         ->add();
-    $this->purchaseOrderManager->purchase();
+    $this->purchaseOrderManager->process();
 
     // Act
     $stockManager = new StockManager(
@@ -96,6 +96,32 @@ it('handles stock increment correctly when same item is purchased multiple times
 
     // Assert
     expect($stockManager->getQuantity())->toBe(8); // 5 + 3
+});
+
+it('calculates the total price of the order correctly', function () {
+
+    // Arrange
+    $this->purchaseOrderManager->newItem($this->item->id)
+        ->count(5)
+        ->attributeIds($this->attributes->pluck('id')->toArray())
+        ->price(100)
+        ->sendToWarehouse($this->warehouse->id)
+        ->add();
+    $this->purchaseOrderManager->newItem($this->item->id)
+        ->count(3)
+        ->attributeIds($this->attributes->pluck('id')->toArray())
+        ->price(50)
+        ->sendToWarehouse($this->warehouse->id)
+        ->add();
+
+    // Act
+    $this->purchaseOrderManager->process();
+    $totalPrice = $this->purchaseOrderManager->getItemsTotalPrice();
+
+    // Assert
+    expect($totalPrice)
+        ->toBeBetween(649.99, 650.01) // 5 * 100 + 3 * 50
+    ->and(PurchaseOrder::first()->total_price)->toBeBetween(649.99, 650.01); // 5 * 100 + 3 * 50
 });
 
 it('throws an exception if no warehouse is set in purchase item builder', function () {
@@ -124,7 +150,7 @@ it('rolls back transaction on exception', function () {
 
 
     // Act & Assert
-    expect(fn() => $this->purchaseOrderManager->purchase())->toThrow(Exception::class)
+    expect(fn() => $this->purchaseOrderManager->process())->toThrow(Exception::class)
         ->and(PurchaseOrder::count())->toBe(0)
         ->and(PurchaseItem::count())->toBe(0)
         ->and($this->stockManager->getQuantity())->toBe(0);

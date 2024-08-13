@@ -2,13 +2,13 @@
 
 namespace App\Managers\Stock;
 
+use App\Exceptions\NegativeStockQuantityException;
 use App\Models\Stock;
 
 class StockManager
 {
     // The stock we are editing
     private Stock $stock;
-
 
     // Constructor to set the target item with attributes
     public function __construct(
@@ -53,6 +53,9 @@ class StockManager
     public function decrement(int $quantity): void
     {
         $this->stock->quantity -= $quantity;
+        if ($this->stock->quantity < 0) {
+            throw new NegativeStockQuantityException($this->stock);
+        }
         $this->stock->save();
     }
 

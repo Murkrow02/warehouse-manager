@@ -37,7 +37,7 @@ class PurchaseOrderController extends Controller
         }
 
         // Execute the purchase
-        $order = $manager->purchase();
+        $order = $manager->process();
         return response()->json($order, 201);
     }
 

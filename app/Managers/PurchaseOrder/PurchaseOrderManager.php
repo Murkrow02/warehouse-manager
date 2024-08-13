@@ -2,68 +2,39 @@
 
 namespace App\Managers\PurchaseOrder;
 
-use App\Managers\Stock\StockManager;
+use App\Managers\BaseTradeManager;
 use App\Models\PurchaseItem;
 use App\Models\PurchaseOrder;
-use App\Models\Stock;
-use DB;
-use Exception;
+use App\Managers\Stock\StockManager;
 
-class PurchaseOrderManager
+class PurchaseOrderManager extends BaseTradeManager
 {
-    public array $items = [];   // Array of [purchaseItem, attributeIds]
 
     public function __construct(
-        protected int $supplierId,
-        protected ?string $orderDate = null,
+        protected int $entityId,
+        protected $orderDate = null
     ) {
+        //parent::__construct();
     }
 
-    /**
-     * @throws Exception
-     */
-    public function purchase() : PurchaseOrder
+    protected function createMainTradeEntity(): PurchaseOrder
     {
-        DB::beginTransaction();
+        return PurchaseOrder::create([
+            'supplier_id' => $this->entityId,
+            'order_date' => $this->orderDate ?? now(),
+            'status' => 'pending',
+            'total_price' => $this->getItemsTotalPrice(),
+        ]);
+    }
 
-        try {
-            // Create the purchase order
-            $purchaseOrder = PurchaseOrder::create([
-                'supplier_id' => $this->supplierId,
-                'order_date' => $this->orderDate ?? now(),
-                'status' => 'pending',
-            ]);
+    protected function setMainTradeEntityId($tradeItem, int $entityId): void
+    {
+        $tradeItem->purchase_order_id = $entityId;
+    }
 
-            // Create the purchase items
-            foreach ($this->items as $itemData) {
-
-                /** @var PurchaseItem $purchaseItem */
-                $purchaseItem = $itemData['purchaseItem'];
-
-                // Set the purchase order id
-                $purchaseItem->purchase_order_id = $purchaseOrder->id;
-                $purchaseItem->save();
-
-                // Attach the attributes
-                $purchaseItem->attributes()->attach($itemData['attributeIds']);
-
-                // Fill the stock for the item
-                $stockManager = new StockManager(
-                    $purchaseItem->item_id,
-                    $purchaseItem->warehouse_id,
-                    $itemData['attributeIds']
-                );
-
-                $stockManager->increment($purchaseItem->quantity);
-            }
-
-            DB::commit();
-
-            return $purchaseOrder;
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e; // Re-throw the exception after rolling back the transaction
-        }
+    protected function updateStocksForTradeItem(StockManager $stockManager, $tradeItem): void
+    {
+        $stockManager->increment($tradeItem->quantity);
     }
 
     /*
@@ -71,7 +42,7 @@ class PurchaseOrderManager
     | Builder
     |--------------------------------------------------------------------------
     */
-    public function newItem($itemId) : PurchaseItemBuilder
+    public function newItem($itemId): PurchaseItemBuilder
     {
         return new PurchaseItemBuilder($itemId, $this);
     }

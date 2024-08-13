@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class SaleItem extends Model
 {
@@ -15,6 +16,7 @@ class SaleItem extends Model
         'sale_id',
         'item_id',
         'quantity',
+        'warehouse_id',
         'price',
     ];
 
@@ -41,9 +43,14 @@ class SaleItem extends Model
         return $this->belongsTo(Item::class);
     }
 
-    public function attributes(): MorphMany
+    public function warehouse(): BelongsTo
     {
-        return $this->morphMany(AttributeAssignment::class, 'attributable');
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function attributes(): MorphToMany
+    {
+        return $this->morphToMany(Attribute::class, 'attributable');
     }
 
 }
