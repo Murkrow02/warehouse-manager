@@ -41,4 +41,12 @@ abstract class Controller
 
         return $store;
     }
+
+    protected function okResponse($data = [], $message = '')
+    {
+        return response()->json([
+            'message' => $message,
+            'data' => $data
+        ]);
+    }
 }

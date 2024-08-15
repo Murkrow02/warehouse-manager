@@ -17,6 +17,7 @@ class ItemListBloc extends Bloc<ItemEvent, ItemState> {
 
   Future<void> _onLoadItems(LoadItems event, Emitter<ItemState> emit) async {
     try {
+
       final items = await itemRepository.fetchItems(
         startIndex: event.startIndex,
         limit: event.limit,

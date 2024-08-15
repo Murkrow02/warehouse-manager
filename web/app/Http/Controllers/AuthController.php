@@ -23,7 +23,8 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['user' => $user, 'token' => $user->createToken('Personal Access Token')->plainTextToken]);
+        return $this->okResponse(
+            ['user' => $user, 'token' => $user->createToken('Personal Access Token')->plainTextToken]);
     }
 
     public function login(Request $request)
@@ -40,7 +41,7 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
-        return response()->json(['user' => $user, 'token' => $token]);
+        return $this->okResponse(['user' => $user, 'token' => $token]);
     }
 
     public function logout(Request $request)

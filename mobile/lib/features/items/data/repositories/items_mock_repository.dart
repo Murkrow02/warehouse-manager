@@ -8,7 +8,6 @@ class ItemsMockRepository implements ItemsRepository {
     return List.generate(limit, (index) => Item(
       id: index + startIndex,
       name: 'Item ${index + startIndex}',
-      price: (index + startIndex) * 10.0,
     ));
   }
 

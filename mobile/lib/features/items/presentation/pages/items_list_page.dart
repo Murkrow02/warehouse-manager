@@ -60,16 +60,12 @@ class _ItemListView extends StatelessWidget {
                     DataColumn(
                       label: Text('Name'),
                     ),
-                    DataColumn(
-                      label: Text('Price'),
-                    ),
                   ],
                   rows: List<DataRow>.generate(
                     state.items.length,
                     (index) => DataRow(cells: [
                       DataCell(Text(state.items[index].id.toString())),
                       DataCell(Text(state.items[index].name)),
-                      DataCell(Text(state.items[index].price.toString())),
                     ]),
                   ),
                 ),
