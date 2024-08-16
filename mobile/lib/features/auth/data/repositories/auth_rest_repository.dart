@@ -17,4 +17,14 @@ class AuthRestRepository implements AuthRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(Preferences.AUTH_TOKEN, loginResponse.token);
   }
+
+  @override
+  Future logout() async {
+
+    var prefs = await SharedPreferences.getInstance();
+    prefs.remove(Preferences.AUTH_TOKEN);
+
+    // TODO: implement logout
+    //throw UnimplementedError();
+  }
 }

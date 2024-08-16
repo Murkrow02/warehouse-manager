@@ -25,4 +25,9 @@ class ItemsRestRepository implements ItemsRepository {
     // TODO: implement updateItem
     throw UnimplementedError();
   }
+
+  @override
+  Future<Item> fetchItem(int id) async {
+    return await _restClient.get("items/$id").then((item) => Item.fromJson(item));
+  }
 }

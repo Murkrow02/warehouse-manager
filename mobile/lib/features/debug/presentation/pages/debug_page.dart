@@ -12,12 +12,24 @@ class DebugPage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/login');
+              },
+              child: const Text('Login'),
+            ),
+
+            SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pushNamed('/items');
               },
               child: const Text('Items'),
             ),
+
+
           ],
         ),
       ),

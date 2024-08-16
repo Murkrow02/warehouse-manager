@@ -41,7 +41,7 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
-        return $this->okResponse(['user' => $user, 'token' => $token]);
+        return $this->okResponse(['token' => $token]);
     }
 
     public function logout(Request $request)

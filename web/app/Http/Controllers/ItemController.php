@@ -23,7 +23,7 @@ class ItemController extends Controller
 
     public function show(Item $item): JsonResponse
     {
-        return response()->json($item->load('supplier', 'categories'));
+        return $this->okResponse($item->load('supplier', 'categories'));
     }
 
     public function store(StoreItemRequest $request): JsonResponse

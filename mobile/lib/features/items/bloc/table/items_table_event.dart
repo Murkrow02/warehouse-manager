@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-import '../data/models/item.dart';
+import '../../data/models/item.dart';
 
-abstract class ItemEvent extends Equatable {
+abstract class ItemsTableEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
 // Events for listing items
-class LoadItems extends ItemEvent {
+class LoadItems extends ItemsTableEvent {
   final int startIndex;
   final int limit;
   final String? query;
@@ -21,18 +21,8 @@ class LoadItems extends ItemEvent {
   List<Object?> get props => [startIndex, limit, query, sortBy, ascending];
 }
 
-// Events for loading a single item
-class LoadItem extends ItemEvent {
-  final int id;
-
-  LoadItem({required this.id});
-
-  @override
-  List<Object?> get props => [id];
-}
-
 // Events for searching items
-class SearchItems extends ItemEvent {
+class SearchItems extends ItemsTableEvent {
   final String query;
 
   SearchItems({required this.query});
@@ -42,7 +32,7 @@ class SearchItems extends ItemEvent {
 }
 
 // Events for sorting items
-class SortItems extends ItemEvent {
+class SortItems extends ItemsTableEvent {
   final String sortBy;
   final bool ascending;
 
@@ -50,24 +40,4 @@ class SortItems extends ItemEvent {
 
   @override
   List<Object?> get props => [sortBy, ascending];
-}
-
-// Events for creating a new item
-class CreateItem extends ItemEvent {
-  final Item item;
-
-  CreateItem({required this.item});
-
-  @override
-  List<Object?> get props => [item];
-}
-
-// Events for updating an existing item
-class UpdateItem extends ItemEvent {
-  final Item item;
-
-  UpdateItem({required this.item});
-
-  @override
-  List<Object?> get props => [item];
 }

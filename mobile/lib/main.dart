@@ -10,7 +10,7 @@ import 'package:warehouse_manager/features/items/data/repositories/items_mock_re
 import 'package:warehouse_manager/features/items/data/repositories/items_repository.dart';
 import 'package:warehouse_manager/features/items/data/repositories/items_rest_repository.dart';
 
-import 'features/items/presentation/pages/items_list_page.dart';
+import 'features/items/presentation/pages/items_table_page.dart';
 
 void main() {
   runApp(ToastificationWrapper(child: App()));
