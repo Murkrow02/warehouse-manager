@@ -21,6 +21,16 @@ class LoadItems extends ItemEvent {
   List<Object?> get props => [startIndex, limit, query, sortBy, ascending];
 }
 
+// Events for loading a single item
+class LoadItem extends ItemEvent {
+  final int id;
+
+  LoadItem({required this.id});
+
+  @override
+  List<Object?> get props => [id];
+}
+
 // Events for searching items
 class SearchItems extends ItemEvent {
   final String query;
