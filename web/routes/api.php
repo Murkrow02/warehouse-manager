@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('items')->group(function () {
         Route::get('/', [ItemController::class, 'index']);
         Route::get('/{item}', [ItemController::class, 'show']);
+        Route::get('/code/{code}', [ItemController::class, 'showByCode']);
         Route::post('/', [ItemController::class, 'store']);
         Route::put('/{item}', [ItemController::class, 'update']);
         Route::post('/{item}/images', [ItemController::class, 'addImages']);

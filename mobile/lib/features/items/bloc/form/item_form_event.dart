@@ -7,11 +7,10 @@ abstract class ItemFormEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-// Event for loading an existing item
 class LoadItem extends ItemFormEvent {
-  final int id;
+  final int? id;
 
-  LoadItem({required this.id});
+  LoadItem({this.id});
 
   @override
   List<Object?> get props => [id];

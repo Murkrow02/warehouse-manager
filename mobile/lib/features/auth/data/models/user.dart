@@ -19,7 +19,7 @@ class User implements Serializable {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'email': email,

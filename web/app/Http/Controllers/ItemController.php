@@ -14,8 +14,7 @@ class ItemController extends Controller
     public function index(Request $request): JsonResponse
     {
         $items = Item::when($request->input('search'), function ($query, $search) {
-            return $query->where('name', 'like', "%{$search}%")
-                ->orWhere('code', 'like', "%{$search}%");
+            return $query->where('name', 'like', "%{$search}%");
         })->simplePaginate();
 
         return response()->json($items);
@@ -23,6 +22,12 @@ class ItemController extends Controller
 
     public function show(Item $item): JsonResponse
     {
+        return $this->okResponse($item->load('supplier', 'categories'));
+    }
+
+    public function showByCode(string $code): JsonResponse
+    {
+        $item = Item::where('code', $code)->first();
         return $this->okResponse($item->load('supplier', 'categories'));
     }
 

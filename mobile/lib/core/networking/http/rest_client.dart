@@ -31,11 +31,15 @@ class RestClient {
   }
 
   // Function to perform a GET request
-  Future<dynamic> get(String endpoint) async {
+  Future<dynamic> get(String endpoint, {Map<String, dynamic>? queryParameters}) async {
     logger.d("GET: $endpoint");
+
+    // Create the uri with the query parameters
+    var uri = Uri.parse('$baseUrl/$endpoint');
+    uri.replace(queryParameters: queryParameters);
     final response = await http
         .get(
-      Uri.parse('$baseUrl/$endpoint'),
+      uri,
       headers: await getHeaders(),
     )
         .timeout(const Duration(seconds: timeoutSec));
@@ -47,7 +51,7 @@ class RestClient {
     final response = await http
         .put(
       Uri.parse('$baseUrl/$endpoint'),
-      body: jsonEncode(data is Serializable ? data.toJson() : data),
+      body: jsonEncode(data is Serializable ? data.toMap() : data),
       headers: await getHeaders(),
     )
         .timeout(const Duration(seconds: timeoutSec));
@@ -60,7 +64,7 @@ class RestClient {
     final response = await http
         .post(
       Uri.parse('$baseUrl/$endpoint'),
-      body: jsonEncode(data is Serializable ? data.toJson() : data),
+      body: jsonEncode(data is Serializable ? data.toMap() : data),
       headers: await getHeaders(),
     )
         .timeout(const Duration(seconds: timeoutSec));

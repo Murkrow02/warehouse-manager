@@ -19,7 +19,7 @@ class ItemsListPage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ItemFormPage()),
+                MaterialPageRoute(builder: (context) => const ItemFormPage()),
               );
             },
           ),
@@ -76,8 +76,7 @@ class _ItemListView extends StatelessWidget {
   }
 }
 
-Widget _buildTable(BuildContext context, ItemsLoaded state)
-{
+Widget _buildTable(BuildContext context, ItemsLoaded state) {
   return Expanded(
     child: DataTable2(
       showCheckboxColumn: false,
@@ -95,10 +94,16 @@ Widget _buildTable(BuildContext context, ItemsLoaded state)
       ],
       rows: List<DataRow>.generate(
         state.items.length,
-            (index) => DataRow(
+        (index) => DataRow(
             onSelectChanged: (_) {
-              Navigator.pushNamed(
-                  context, "/item");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ItemFormPage(
+                    item: state.items[index]
+                  ),
+                ),
+              );
             },
             cells: [
               DataCell(Text(state.items[index].id.toString())),

@@ -6,7 +6,7 @@ class LoginResponse implements Serializable {
   LoginResponse({required this.token});
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'token': token,
     };

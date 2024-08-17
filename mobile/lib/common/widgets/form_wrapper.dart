@@ -8,13 +8,22 @@ class FormWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: child,
+
+    // Get screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+    double formWidth = screenWidth > 1000 ? 1000 : screenWidth;
+
+    return Center(
+      child: SizedBox(
+        width: formWidth,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 7,
+            child: Padding(
+              padding: const EdgeInsets.all(26.0),
+              child: child,
+            ),
           ),
         ),
       ),

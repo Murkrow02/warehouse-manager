@@ -30,4 +30,9 @@ class ItemsRestRepository implements ItemsRepository {
   Future<Item> fetchItem(int id) async {
     return await _restClient.get("items/$id").then((item) => Item.fromJson(item));
   }
+
+  @override
+  Future<Item> fetchItemByCode(String code) async {
+    return await _restClient.get("items/code/$code").then((item) => Item.fromJson(item));
+  }
 }
