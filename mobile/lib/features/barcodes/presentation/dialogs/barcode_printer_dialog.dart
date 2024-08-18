@@ -8,6 +8,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:warehouse_manager/common/widgets/error_alert.dart';
+import 'package:warehouse_manager/common/widgets/loading.dart';
 
 import '../../bloc/printer/barcode_printer_bloc.dart';
 import '../../bloc/printer/barcode_printer_event.dart';
@@ -30,7 +32,7 @@ class BarcodePrinterDialog extends StatelessWidget {
 
             // Scan for printer on load
             if (state is PrinterScanning) {
-              return const Center(child: CircularProgressIndicator());
+              return const Loading();
             }
 
             // Show list of printers
@@ -45,7 +47,7 @@ class BarcodePrinterDialog extends StatelessWidget {
                   child: Column(
                 children: [
                   Text('Connecting to: $printerName'),
-                  CircularProgressIndicator(),
+                  const Loading(),
                 ],
               ));
             }
@@ -56,8 +58,8 @@ class BarcodePrinterDialog extends StatelessWidget {
             }
 
             // Error occurred
-            else if (state is PrintingFailed) {
-              return Center(child: Text(state.message));
+            else if (state is PrintingError) {
+              return ErrorAlert(state.error);
             }
 
             // Printing successful

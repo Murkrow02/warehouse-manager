@@ -21,8 +21,13 @@ class FormWrapper extends StatelessWidget {
           child: Card(
             elevation: 7,
             child: Padding(
-              padding: const EdgeInsets.all(26.0),
-              child: child,
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(26.0),
+                  child: child,
+                ),
+              ),
             ),
           ),
         ),

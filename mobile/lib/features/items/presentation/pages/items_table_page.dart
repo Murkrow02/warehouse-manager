@@ -1,6 +1,9 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:warehouse_manager/common/widgets/error_alert.dart';
+import 'package:warehouse_manager/common/widgets/loading.dart';
+import 'package:warehouse_manager/common/widgets/table_wrapper.dart';
 import 'package:warehouse_manager/features/items/bloc/table/items_table_bloc.dart';
 import 'package:warehouse_manager/features/items/bloc/table/items_table_event.dart';
 import 'package:warehouse_manager/features/items/bloc/table/items_table_state.dart';
@@ -19,7 +22,7 @@ class ItemsListPage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ItemFormPage()),
+                MaterialPageRoute(builder: (context) => ItemFormPage()),
               );
             },
           ),
@@ -41,7 +44,7 @@ class _ItemListView extends StatelessWidget {
     return BlocBuilder<ItemsTableBloc, ItemsTableState>(
       builder: (context, state) {
         if (state is ItemsLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Loading();
         } else if (state is ItemsLoaded) {
           return Column(
             children: [
@@ -49,9 +52,10 @@ class _ItemListView extends StatelessWidget {
               _buildTable(context, state),
             ],
           );
-        } else {
-          return Container();
+        } else if (state is ItemsError) {
+          return ErrorAlert(state.error);
         }
+        return const SizedBox.shrink();
       },
     );
   }
@@ -77,19 +81,22 @@ class _ItemListView extends StatelessWidget {
 }
 
 Widget _buildTable(BuildContext context, ItemsLoaded state) {
-  return Expanded(
+  return TableWrapper(
     child: DataTable2(
       showCheckboxColumn: false,
       columnSpacing: 12,
       horizontalMargin: 12,
       minWidth: 600,
-      columns: [
-        const DataColumn2(
+      columns: const [
+        DataColumn2(
           label: Text('ID'),
           size: ColumnSize.S,
         ),
-        const DataColumn(
+        DataColumn(
           label: Text('Name'),
+        ),
+        DataColumn(
+          label: Text('Code'),
         ),
       ],
       rows: List<DataRow>.generate(
@@ -99,15 +106,14 @@ Widget _buildTable(BuildContext context, ItemsLoaded state) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ItemFormPage(
-                    item: state.items[index]
-                  ),
+                  builder: (context) => ItemFormPage(item: state.items[index]),
                 ),
               );
             },
             cells: [
               DataCell(Text(state.items[index].id.toString())),
               DataCell(Text(state.items[index].name)),
+              DataCell(Text(state.items[index].code)),
             ]),
       ),
     ),

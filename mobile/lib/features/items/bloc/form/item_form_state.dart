@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:warehouse_manager/core/exceptions/api_validation_exception.dart';
+import 'package:warehouse_manager/core/models/traced_error.dart';
 
 import '../../data/models/item.dart';
-
 
 abstract class ItemFormState extends Equatable {
   @override
@@ -20,10 +21,20 @@ class ItemLoaded extends ItemFormState {
 }
 
 class ItemError extends ItemFormState {
-  final String message;
+  final TracedError error;
 
-  ItemError({required this.message});
+  ItemError({required this.error});
 
   @override
-  List<Object?> get props => [message];
+  List<Object> get props => [error];
+}
+
+class ItemApiValidationError extends ItemFormState {
+  final ApiValidationException validationException;
+  final Item item;
+
+  ItemApiValidationError({required this.validationException, required this.item});
+
+  @override
+  List<Object> get props => [validationException, item];
 }

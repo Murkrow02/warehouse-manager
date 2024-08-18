@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:warehouse_manager/features/items/bloc/form/item_form_state.dart';
+import '../../../../core/exceptions/api_validation_exception.dart';
+import '../../../../core/models/traced_error.dart';
 import '../../data/models/item.dart';
 import '../../data/repositories/items_repository.dart';
 import 'item_form_event.dart';
@@ -26,8 +28,12 @@ class ItemFormBloc extends Bloc<ItemFormEvent, ItemFormState> {
     try {
       final newItem = await itemRepository.createItem(event.item);
       //emit(ItemOperationSuccess(item: newItem));
-    } catch (error) {
-      //emit(ItemError(message: error.toString()));
+    }
+    on ApiValidationException catch (e) {
+      emit(ItemApiValidationError(validationException: e, item: event.item));
+    }
+    catch (e,s) {
+      emit(ItemError(error: TracedError(e, s)));
     }
   }
 
@@ -35,8 +41,8 @@ class ItemFormBloc extends Bloc<ItemFormEvent, ItemFormState> {
     try {
       final item = event.id != null ? await itemRepository.fetchItem(event.id!) : Item();
       emit(ItemLoaded(item: item));
-    } catch (error) {
-      emit(ItemError(message: error.toString()));
+    } catch (e,s) {
+      emit(ItemError(error: TracedError(e, s)));
     }
   }
 }

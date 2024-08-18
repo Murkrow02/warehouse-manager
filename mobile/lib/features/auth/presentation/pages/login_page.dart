@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:warehouse_manager/common/widgets/error_alert.dart';
+import 'package:warehouse_manager/common/widgets/loading.dart';
 import 'package:warehouse_manager/features/auth/bloc/auth_bloc.dart';
 import 'package:warehouse_manager/features/auth/data/repositories/auth_rest_repository.dart';
 import '../../bloc/auth_event.dart';
@@ -31,9 +33,9 @@ class _LoginView extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Loading();
         } else if (state is AuthError) {
-          return Text(state.message);
+          return ErrorAlert(state.error);
         } else if (state is AuthAuthenticated) {
           return Center(
               child: ElevatedButton(onPressed: (){

@@ -40,6 +40,8 @@ class Item extends Model implements HasMedia
 
     protected $casts = [
         'last_reorder_date' => 'date',
+        'purchase_price' => 'float',
+        'sale_price' => 'float',
     ];
 
     /*

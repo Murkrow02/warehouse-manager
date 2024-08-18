@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_thermal_printer/flutter_thermal_printer.dart';
 import 'package:flutter_thermal_printer/utils/printer.dart';
 
+import '../../../../core/models/traced_error.dart';
 import 'barcode_printer_event.dart';
 import 'barcode_printer_state.dart';
 
@@ -40,7 +41,7 @@ class BarcodePrinterBloc extends Bloc<BarcodePrinterEvent, BarcodePrinterState> 
       if (isConnected) {
         emit(PrinterConnected(event.printer));
       } else {
-        emit(PrintingFailed("Failed to connect to printer"));
+        emit(PrintingError(error: TracedError('Failed to connect to printer', StackTrace.current)));
       }
     } catch (e) {
       emit(PrinterError(e.toString()));
@@ -65,8 +66,8 @@ class BarcodePrinterBloc extends Bloc<BarcodePrinterEvent, BarcodePrinterState> 
         longData: true,
       );
       emit(PrintingSuccess());
-    } catch (e) {
-      emit(PrintingFailed("Failed to print receipt"));
+    }  catch (e, s) {
+      emit(PrintingError(error: TracedError(e, s)));
     }
   }
 }

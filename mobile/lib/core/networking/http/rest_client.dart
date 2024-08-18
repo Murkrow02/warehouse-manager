@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warehouse_manager/core/configuration/preferences.dart';
+import 'package:warehouse_manager/core/exceptions/api_validation_exception.dart';
 import '../../../../core/configuration/configs.dart';
 import '../../../../core/exceptions/rest_exception.dart';
 import '../../../utils/toaster.dart';
@@ -51,7 +52,7 @@ class RestClient {
     final response = await http
         .put(
       Uri.parse('$baseUrl/$endpoint'),
-      body: jsonEncode(data is Serializable ? data.toMap() : data),
+      body: jsonEncode(data is Serializable ? data.toJson() : data),
       headers: await getHeaders(),
     )
         .timeout(const Duration(seconds: timeoutSec));
@@ -64,7 +65,7 @@ class RestClient {
     final response = await http
         .post(
       Uri.parse('$baseUrl/$endpoint'),
-      body: jsonEncode(data is Serializable ? data.toMap() : data),
+      body: jsonEncode(data is Serializable ? data.toJson() : data),
       headers: await getHeaders(),
     )
         .timeout(const Duration(seconds: timeoutSec));
@@ -94,6 +95,12 @@ class RestClient {
     // Decode the response
     var data = json.decode(response.body);
     String? message = data['message'];
+
+    // Validation error
+    if (response.statusCode == 422) {
+      var errors = Map<String, List<dynamic>>.from(data['errors']);
+      throw ApiValidationException(errors);
+    }
 
     // Some type of error
     if (response.statusCode != 200 && response.statusCode != 201) {

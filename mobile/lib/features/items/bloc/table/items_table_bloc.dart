@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:warehouse_manager/core/models/traced_error.dart';
 import 'package:warehouse_manager/features/items/bloc/table/items_table_state.dart';
 import '../../data/repositories/items_repository.dart';
 import 'items_table_event.dart';
@@ -24,8 +25,8 @@ class ItemsTableBloc extends Bloc<ItemsTableEvent, ItemsTableState> {
         ascending: event.ascending,
       );
       emit(ItemsLoaded(items: items, hasReachedMax: items.length < event.limit));
-    } catch (error) {
-      //emit(ItemError(message: error.toString()));
+    } catch (e,s) {
+      emit(ItemsError(error: TracedError(e, s)));
     }
   }
 

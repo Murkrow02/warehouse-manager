@@ -1,29 +1,30 @@
+
 import 'package:warehouse_manager/core/models/serializable.dart';
 
-class User implements Serializable {
+class Category  implements Serializable {
   final int id;
-  final String email;
   final String name;
-  User({
+  final String description;
+
+  Category({
     required this.id,
-    required this.email,
     required this.name,
+    required this.description,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
       id: json['id'],
-      email: json['email'],
       name: json['name'],
+      description: json['description'],
     );
   }
 
-  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'email': email,
       'name': name,
+      'description': description,
     };
   }
 }

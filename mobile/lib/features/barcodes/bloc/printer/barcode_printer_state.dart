@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_thermal_printer/flutter_thermal_printer.dart';
 import 'package:flutter_thermal_printer/utils/printer.dart';
 
+import '../../../../core/models/traced_error.dart';
+
 abstract class BarcodePrinterState extends Equatable {
   const BarcodePrinterState();
 
@@ -21,7 +23,6 @@ class PrintersFound extends BarcodePrinterState {
   @override
   List<Object> get props => [printers];
 }
-
 
 class PrinterConnecting extends BarcodePrinterState {
   final Printer printer;
@@ -52,11 +53,11 @@ class PrinterError extends BarcodePrinterState {
 
 class PrintingSuccess extends BarcodePrinterState {}
 
-class PrintingFailed extends BarcodePrinterState {
-  final String message;
+class PrintingError extends BarcodePrinterState {
+  final TracedError error;
 
-  const PrintingFailed(this.message);
+  const PrintingError({required this.error});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [error];
 }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:warehouse_manager/core/models/traced_error.dart';
 import '../data/models/user.dart';
 
 abstract class AuthState extends Equatable {
@@ -17,10 +18,10 @@ class AuthAuthenticated extends AuthState {}
 class AuthUnauthenticated extends AuthState {}
 
 class AuthError extends AuthState {
-  final String message;
+  final TracedError error;
 
-  AuthError({required this.message});
+  AuthError({required this.error});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [error];
 }

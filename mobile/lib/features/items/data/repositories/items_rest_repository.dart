@@ -10,9 +10,8 @@ class ItemsRestRepository implements ItemsRepository {
   final RestClient _restClient = RestClient();
 
   @override
-  Future<Item> createItem(Item item) {
-    // TODO: implement createItem
-    throw UnimplementedError();
+  Future<Item> createItem(Item item) async {
+    return await _restClient.post("items", item.toJson()).then((item) => Item.fromJson(item));
   }
 
   @override

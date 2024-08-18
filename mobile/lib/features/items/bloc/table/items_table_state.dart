@@ -1,16 +1,13 @@
 import 'package:equatable/equatable.dart';
-
+import 'package:warehouse_manager/core/models/traced_error.dart';
 import '../../data/models/item.dart';
-
 
 abstract class ItemsTableState extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class ItemsLoading extends ItemsTableState {
-
-}
+class ItemsLoading extends ItemsTableState {}
 
 class ItemsLoaded extends ItemsTableState {
   final List<Item> items;
@@ -27,4 +24,12 @@ class ItemsLoaded extends ItemsTableState {
 
   @override
   List<Object?> get props => [items, hasReachedMax];
+}
+
+class ItemsError extends ItemsTableState {
+  final TracedError error;
+  ItemsError({required this.error});
+
+  @override
+  List<Object> get props => [error];
 }
