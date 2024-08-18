@@ -30,7 +30,7 @@ class ItemFormBloc extends Bloc<ItemFormEvent, ItemFormState> {
       //emit(ItemOperationSuccess(item: newItem));
     }
     on ApiValidationException catch (e) {
-      emit(ItemApiValidationError(validationException: e, item: event.item));
+      emit(ItemApiValidationError(validationException: e, model: event.item));
     }
     catch (e,s) {
       emit(ItemError(error: TracedError(e, s)));
@@ -39,6 +39,7 @@ class ItemFormBloc extends Bloc<ItemFormEvent, ItemFormState> {
 
   Future<void> _onLoadItem(LoadItem event, Emitter<ItemFormState> emit) async {
     try {
+      await Future.delayed(const Duration(seconds: 5));
       final item = event.id != null ? await itemRepository.fetchItem(event.id!) : Item();
       emit(ItemLoaded(item: item));
     } catch (e,s) {
