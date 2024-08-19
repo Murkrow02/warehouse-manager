@@ -5,6 +5,7 @@ import 'package:warehouse_manager/common/widgets/form_field_spacer.dart';
 import 'package:warehouse_manager/common/widgets/form_page.dart';
 import 'package:warehouse_manager/common/widgets/form_wrapper.dart';
 import 'package:warehouse_manager/features/items/bloc/form/item_form_bloc.dart';
+import '../../../../common/bloc/form/form_event.dart';
 import '../../data/models/item.dart';
 import '../../data/repositories/items_repository.dart';
 

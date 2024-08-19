@@ -5,30 +5,30 @@ import '../../../../core/exceptions/api_validation_exception.dart';
 import '../../../../core/models/traced_error.dart';
 import '../../data/models/item.dart';
 import '../../data/repositories/items_repository.dart';
-import 'item_form_event.dart';
 
 class ItemFormBloc extends Bloc<FormEventBase, FormStateBase> {
   final ItemsRepository itemRepository;
 
   ItemFormBloc({required this.itemRepository}) : super(FormLoadingState()) {
+    on<LoadFormModel<Item>>(_onLoadItem);
     on<UpdateFormModel>(_onUpdateItem);
     on<CreateFormModel>(_onCreateItem);
-    on<LoadFormModel>(_onLoadItem);
   }
 
 
-  Future<void> _onLoadItem(LoadFormModel event, Emitter<FormStateBase> emit) async {
+  Future<void> _onLoadItem(LoadFormModel<Item> event, Emitter<FormStateBase> emit) async {
     try {
-      final item = event.id != null ? await itemRepository.fetchItem(event.id!) : Item();
-      emit(FormReadyState(model: item));
-    } catch (e,s) {
-     // emit(ItemError(error: TracedError(e, s)));
+      final item = event.model != null ? await itemRepository.fetchItem(event.model!.id) : Item();
+      emit(FormReadyState<Item>(model: item));
+    } catch (error) {
+      print('Error occurred: $error'); // Handle error
+      emit(FormErrorState(error: error)); // Example of handling an error state
     }
   }
 
   Future<void> _onUpdateItem(UpdateFormModel event, Emitter<FormStateBase> emit) async {
     try {
-      final updatedItem = await itemRepository.updateItem(event.item);
+      final updatedItem = await itemRepository.updateItem(event.model);
       //emit(ItemOperationSuccess(item: updatedItem));
     } catch (error) {
       //emit(ItemError(message: error.toString()));
@@ -37,7 +37,7 @@ class ItemFormBloc extends Bloc<FormEventBase, FormStateBase> {
 
   Future<void> _onCreateItem(CreateFormModel event, Emitter<FormStateBase> emit) async {
     try {
-      final newItem = await itemRepository.createItem(event.item);
+      final newItem = await itemRepository.createItem(event.model);
       //emit(ItemOperationSuccess(item: newItem));
     }
     on ApiValidationException catch (e) {

@@ -6,6 +6,7 @@ import 'package:warehouse_manager/common/bloc/form/form_state.dart';
 import 'package:warehouse_manager/common/widgets/error_alert.dart';
 import 'package:warehouse_manager/common/widgets/loading.dart';
 import 'package:warehouse_manager/core/exceptions/unexpected_state_exception.dart';
+import 'package:warehouse_manager/core/models/serializable.dart';
 import '../../core/models/traced_error.dart';
 
 /*
@@ -14,7 +15,7 @@ import '../../core/models/traced_error.dart';
   * This handles the API-validation errors and invalidates the fields with errors.
  */
 
-class FormPage<Model extends Object,
+class FormPage<Model extends Serializable,
         FormModelBloc extends Bloc<FormEventBase, FormStateBase>>
     extends StatelessWidget {
   final Model? model;
@@ -34,23 +35,26 @@ class FormPage<Model extends Object,
       create: createFormBloc,
       child: Builder(
         builder: (context) {
+
+          // Start loading process
+          context.read<FormModelBloc>().add(LoadFormModel(model: model));
+
           return Scaffold(
             appBar: AppBar(title: Text('Form')),
             body: BlocBuilder<FormModelBloc, FormStateBase>(
               builder: (context, state) {
-                // Loading
+                // Log state changes to see if the builder is triggered
+                print('Current state: $state');
+
                 if (state is FormLoadingState) {
                   return const Loading();
                 }
 
-                // Ready
-                else if (state is FormReadyState<Model>) {
+                if (state is FormReadyState<Model>) {
                   return form(state.model, formKey);
                 }
 
-                // Validation Error from API
-                else if (state is FormApiValidationErrorState<Model>) {
-                  // Invalidate fields with errors
+                if (state is FormApiValidationErrorState<Model>) {
                   formKey.currentState!.fields.forEach((key, field) {
                     if (state.validationException.errors.containsKey(key)) {
                       field.invalidate(

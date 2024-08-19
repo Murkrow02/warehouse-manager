@@ -5,30 +5,28 @@ abstract class FormEventBase extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadFormModel extends FormEventBase {
-  final int? id;
-
-  LoadFormModel({this.id});
+class LoadFormModel<T> extends FormEventBase {
+  final T? model;
+  LoadFormModel({this.model});
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [model];
 }
 
 
 class CreateFormModel<T> extends FormEventBase {
-  final T item;
-
-  CreateFormModel({required this.item});
+  final T model;
+  CreateFormModel({required this.model});
 
   @override
-  List<Object?> get props => [item];
+  List<Object?> get props => [model];
 }
 
 class UpdateFormModel<T> extends FormEventBase {
-  final T item;
+  final T model;
 
-  UpdateFormModel({required this.item});
+  UpdateFormModel({required this.model});
 
   @override
-  List<Object?> get props => [item];
+  List<Object?> get props => [model];
 }
