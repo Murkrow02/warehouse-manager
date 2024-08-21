@@ -6,6 +6,7 @@ import 'package:warehouse_manager/common/widgets/form_page.dart';
 import 'package:warehouse_manager/common/widgets/form_wrapper.dart';
 import 'package:warehouse_manager/features/items/bloc/form/item_form_bloc.dart';
 import '../../../../common/bloc/form/form_event.dart';
+import '../../../barcodes/presentation/dialogs/barcode_printer_dialog.dart';
 import '../../data/models/item.dart';
 import '../../data/repositories/items_repository.dart';
 
@@ -19,8 +20,24 @@ class ItemFormPage extends StatelessWidget {
     return FormPage<Item, ItemFormBloc>(
       model: item,
       createFormBloc: (context) => ItemFormBloc(itemRepository: context.read<ItemsRepository>()),
-      form: _buildForm, // This now matches the expected type
+      form: _buildForm,
+      actions: _buildActions,
     );
+  }
+
+  List<Widget> _buildActions(BuildContext context, Item? item) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.barcode_reader),
+        onPressed: () async {
+          // Show the dialog
+          await showDialog(
+            context: context,
+            builder: (context) => BarcodePrinterDialog(code: item!.code),
+          );
+        },
+      ),
+    ];
   }
 
   Widget _buildForm(Item? item, GlobalKey<FormBuilderState> formKey) {

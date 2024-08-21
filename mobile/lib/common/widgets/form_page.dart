@@ -20,12 +20,14 @@ class FormPage<Model extends Serializable,
     extends StatelessWidget {
   final Model? model;
   final Widget Function(Model? model, GlobalKey<FormBuilderState> formKey) form;
+  final List<Widget>? Function(BuildContext context, Model? model)? actions;
   final FormModelBloc Function(BuildContext context) createFormBloc;
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
 
   FormPage(
       {super.key,
       this.model,
+      this.actions,
       required this.createFormBloc,
       required this.form});
 
@@ -40,7 +42,12 @@ class FormPage<Model extends Serializable,
           context.read<FormModelBloc>().add(LoadFormModel(model: model));
 
           return Scaffold(
-            appBar: AppBar(title: Text('Form')),
+            appBar: AppBar(
+                title: Text('Form'),
+                actions: actions != null
+                    ? actions!(context, model)
+                    : <Widget>[]
+            ),
             body: BlocBuilder<FormModelBloc, FormStateBase>(
               builder: (context, state) {
                 // Log state changes to see if the builder is triggered
